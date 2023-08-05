@@ -4,7 +4,6 @@ background_color #002222
 
 fog_power 2
 run_rules_on_level_start
-scanline
 
 debug
 
@@ -940,6 +939,16 @@ sprite
 white
 .
 
+PlayerChoice
+sprite
+white
+.
+
+EnemyChoice
+sprite
+white
+.
+
 ( Animation Specifier )
 PlayerAnim
 sprite
@@ -987,7 +996,7 @@ Bool = true or false
 PlayerRMS = PlayerRoc or PlayerMan or PlayerSci
 EnemyRMS = EnemyRoc or EnemyMan or EnemySci
 
-Var = Animation or Chat or Items or EnemyRMS or PlayerRMS
+Var = Animation or Chat or Items or EnemyRMS or PlayerRMS or PlayerChoice or EnemyChoice
 
 Animating = PlayerAnim or DoorKA or NekoAct or RMSEnemy
 
@@ -1231,15 +1240,16 @@ late [ Store Item ] [ Items None ] -> [ None ] [ Items Item ]
 ( END )
 
 ( RICHARD M. ST- I mean... Rock, Manuscript, Scissors! )
-late [ Player RMSTrigger ] [ Teleporter ] -> [  ] [ Player Teleporter ]
+late [ Player RMSTrigger ] [ Teleporter ] -> [  ] [ Player ]
 
 [ > Player | Display1 ] -> [ Player | Display2 ]
 [ > Player | Display2 ] -> [ Player | Display3 ]
 [ > Player | Display3 ] -> [ Player | Display1 ]
 
-up [ Action Player | Display ] [ Animation no Animating ] -> [ Action Player | Enemy1 ] [ Animation RMSEnemy x9 ] again
+up [ Action Player | Display ] [ PlayerChoice ] [ Animation no Animating ] -> [ Action Player | Enemy1 ] [ PlayerChoice Display ] [ Animation RMSEnemy x9 ] again
 
-  [ Enemy1 ] [ RMSEnemy ] -> [ selEnemy32 ] [ RMSEnemy ]
+[ Enemy ] [ RMSEnemy x0 ] [ EnemyChoice ] -> [ Enemy ] [ RMSEnemy x0 ] [ EnemyChoice Enemy ]
++ [ Enemy1 ] [ RMSEnemy ] -> [ selEnemy32 ] [ RMSEnemy ]
 + [ Enemy2 ] [ RMSEnemy ] -> [ selEnemy13 ] [ RMSEnemy ]
 + [ Enemy3 ] [ RMSEnemy ] -> [ selEnemy12 ] [ RMSEnemy ]
 + [ RMSEnemy ] -> [ RMSEnemy ] again
@@ -1247,10 +1257,12 @@ up [ Action Player | Display ] [ Animation no Animating ] -> [ Action Player | E
 late [ selEnemy32 ] -> [ random Enemy32 ]
 late [ selEnemy13 ] -> [ random Enemy13 ]
 late [ selEnemy12 ] -> [ random Enemy12 ]
+
+[ PlayerChoice Sci ] [ EnemyChoice Man ] -> [ ] [ ] message "wow"
 ( END RMS )
 
 ( INITIALIZING VARS )
-late horizontal [ VariableStart | | | | | | | | ] -> [ Chat x0 True | Items None | Animation x0 | PlayerMan x0 | PlayerRoc x0 | PlayerSci x0 | EnemyMan x0 | EnemyRoc x0 | EnemySci x0 ]
+late horizontal [ VariableStart | | | | | | | | | | ] -> [ Chat x0 True | Items None | Animation x0 | PlayerMan x0 | PlayerRoc x0 | PlayerSci x0 | EnemyMan x0 | EnemyRoc x0 | EnemySci x0 | PlayerChoice None | EnemyChoice None ]
 
 ==============
 WINCONDITIONS
@@ -1260,16 +1272,16 @@ WINCONDITIONS
 LEVELS
 =======
 
-;;;;;;;;;..
-;-.........
-;.....V.;..
-;....#O,;..
-;.....!.;..
-;\\\\\\\;..
-;...T...;..
-;;;;D;;;;..
-;.......;..
-;....K..;..
-;..N....;..
-;..P....;..
-;;;;;;;;;..
+;;;;;;;;;....
+;-...........
+;.....V.;....
+;....#O,;....
+;.....!.;....
+;\\\\\\\;....
+;...T...;....
+;;;;D;;;;....
+;.......;....
+;....K..;....
+;..N....;....
+;..P....;....
+;;;;;;;;;....
